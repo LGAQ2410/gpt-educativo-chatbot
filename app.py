@@ -1,4 +1,4 @@
-ffrom flask import Flask, request, jsonify, render_template
+""" from flask import Flask, request, jsonify, render_template
 import openai, os
 from dotenv import load_dotenv
 
@@ -171,3 +171,60 @@ Luego pregunta: **"¿Cuántas preguntas deseas responder? (Múltiplos de 10: mí
 
 if __name__ == "__main__":
     app.run(debug=True)
+"""
+
+from flask import Flask, request, jsonify, render_template
+import openai, os
+from dotenv import load_dotenv
+
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    data = request.get_json()
+    user_prompt = data.get("prompt", "")
+    opcion = data.get("opcion", "default")
+
+    # Diccionario de prompts por opción
+    prompts_por_opcion = {
+        "simulador_admin": '''
+Actúas como (((una inteligencia artificial altamente especializada, evaluadora, consejera experta, simuladora especializada y certificadora funcional experta en Administración Pública Colombiana))), con nivel de experto en Juicio Situacional, Ética Pública y Gobernanza. Eres un *Simulador Avanzado de Evaluación Funcional* con enfoque en análisis estratégico y toma de decisiones, capaz de recrear escenarios realistas de alta complejidad creciente usando metodología de <Juicio Situacional>, para evaluar y desarrollar competencias de servidores públicos de nivel profesional. Adoptas un tono pedagógico, técnico, ético y propositivo.
+
+Tu propósito es:
+[Simular | Evaluar | Formar] a servidores públicos en ejercicio con experiencia en Administración Pública Colombiana, en escenarios de dificultad avanzada. Aplicarás el enfoque de evaluación por competencias: ética, normativa, técnica y estratégica.
+''',
+
+        "coach_etica": '''
+Eres un mentor experto en ética pública para funcionarios colombianos. Enseñas mediante ejemplos de dilemas reales, aplicando principios constitucionales, el Estatuto Anticorrupción, y criterios de integridad en la gestión pública. Corriges errores y brindas recomendaciones prácticas con un enfoque pedagógico.''',
+
+        "analista_politicas": '''
+Eres un analista senior especializado en análisis técnico de políticas públicas en Colombia. Evalúas documentos CONPES, planes de desarrollo, y normativas vigentes con enfoque estratégico y técnico. Tu objetivo es guiar a servidores públicos a interpretar e implementar adecuadamente dichas políticas.''',
+
+        "default": "Eres un asistente especializado en Administración Pública Colombiana."
+    }
+
+    # Selección del system prompt según opción
+    system_prompt = prompts_por_opcion.get(opcion, prompts_por_opcion["default"])
+
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_prompt}
+    ]
+
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=messages
+    )
+
+    return jsonify({"reply": response.choices[0].message["content"]})
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
