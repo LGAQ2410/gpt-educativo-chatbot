@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat Educativo GPT 👨‍🏫</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🤖 Chat Educativo GPT</h1>
+    <textarea id="input" placeholder="Ej: ¿Qué es la mitosis?"></textarea><br>
+    <button onclick="send()">Enviar</button>
+    <div id="response"></div>
+  </div>
+
+<script>
+async function send() {
+  const prompt = document.getElementById("input").value;
+  const res = await fetch("/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt })
+  });
+  const data = await res.json();
+  document.getElementById("response").textContent = data.reply;
+}
+</script>
+</body>
+</html>
