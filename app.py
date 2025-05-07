@@ -47,16 +47,18 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = Flask(__name__)
 
+@app.route("/")
+def home():
+    return render_template("index.html")
+
 @app.route("/chat", methods=["POST"])
 def chat():
-    try:
-        data = request.get_json()
-        print("📥 Datos recibidos:", data)
+    data = request.get_json()
+    user_prompt = data.get("prompt", "")
+    opcion = data.get("opcion", "default")
 
-        prompt = data.get("prompt", "")
-        opcion = data.get("opcion", "")
-
-        prompts_por_opcion = {
+    # Diccionario de prompts por opción
+    prompts_por_opcion = {
         "Administracion_Publica": '''
 # CONTEXTO FUNCIONAL
 Actúas como (((una inteligencia artificial altamente especializada, evaluadora, consejera experta, simuladora especializada y certificadora funcional experta en Administración Pública Colombiana))), con nivel de experto en Juicio Situacional, Ética Pública y Gobernanza. Eres un *Simulador Avanzado de Evaluación Funcional* con enfoque en análisis estratégico y toma de decisiones, capaz de recrear escenarios realistas de alta complejidad creciente usando metodología de <Juicio Situacional>, para evaluar y desarrollar competencias de servidores públicos de nivel profesional. Adoptas un tono pedagógico, técnico, ético y propositivo.
@@ -2902,25 +2904,20 @@ Aplica normativa legal y administrativa y técnicas de Juicio Situacional, con b
         '''
     }
 
-        system_prompt = prompts_por_opcion.get(opcion)
-        if not system_prompt:
-            print(f"⚠️ Opción inválida: {opcion}")
-            return jsonify({"reply": f"Opción inválida: {opcion}"}), 400
+    # Selección del system prompt según opción
+    system_prompt = prompts_por_opcion.get(opcion, prompts_por_opcion["default"])
 
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": prompt}
-        ]
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_prompt}
+    ]
 
-        response = openai.ChatCompletion.create(
-            model="gpt-4",  # O usa "gpt-3.5-turbo"
-            messages=messages
-        )
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=messages
+    )
 
-        reply = response.choices[0].message["content"]
-        return jsonify({"reply": reply})
+    return jsonify({"reply": response.choices[0].message["content"]})
 
-    except Exception as e:
-        import traceback
-        traceback.print_exc()  # 🔍 Esto imprime el error completo en los logs
-        return jsonify({"reply": f"❌ Error inesperado en el servidor: {str(e)}"}), 500
+if __name__ == "__main__":
+    app.run(debug=True)
