@@ -18,6 +18,11 @@
 
   <script>
     async function send() {
+      //Inicia prueba
+      const prompt = document.getElementById("input").value;
+      console.log("Botón presionado. Pregunta:", prompt); // ✅ TEST DE BOTÓN
+      alert("Probando: " + prompt);
+      // Termina prueba
       const prompt = document.getElementById("input").value;
       const res = await fetch("/chat", {
         method: "POST",
