@@ -73,7 +73,7 @@
     <div id="response" class="bg-gray-50 p-4 border rounded whitespace-pre-wrap"></div>
   </div>
 
-<script>
+<!-- <script>
   let selectedOption = "Administracion_Publica";
 
   document.querySelectorAll(".mode-btn").forEach(btn => {
@@ -94,7 +94,45 @@
     const data = await res.json();
     document.getElementById("response").textContent = data.reply;
   }
+</script>  -->
+
+<script>
+  let selectedOption = "Administracion_Publica";
+
+  document.querySelectorAll(".mode-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      // Cambia la opción seleccionada a la que corresponde al atributo data-mode
+      selectedOption = btn.dataset.mode;
+
+      // Quita la clase de resaltado de todos los botones
+      document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("ring", "ring-offset-2"));
+
+      // Agrega la clase de resaltado al botón seleccionado
+      btn.classList.add("ring", "ring-offset-2");
+    });
+  });
+
+  async function send() {
+    const prompt = document.getElementById("input").value;
+
+    try {
+      const res = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt, opcion: selectedOption })
+      });
+
+      if (!res.ok) throw new Error("Error en la respuesta del servidor");
+
+      const data = await res.json();
+      document.getElementById("response").textContent = data.reply;
+    } catch (error) {
+      console.error("Error:", error);
+      document.getElementById("response").textContent = "⚠️ Ocurrió un error. Revisa la consola para más detalles.";
+    }
+  }
 </script>
+  
 </body>
 </html>
 
