@@ -2922,6 +2922,15 @@ Aplica normativa legal y administrativa y técnicas de Juicio Situacional, con b
 if __name__ == "__main__":
     app.run(debug=True)
 """
+from flask import Flask, request, jsonify, render_template
+import openai, os
+from dotenv import load_dotenv
+
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+app = Flask(__name__)
+
 @app.route("/chat", methods=["POST"])
 def chat():
     try:
