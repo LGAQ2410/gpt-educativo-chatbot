@@ -101,7 +101,7 @@
   }
 </script>  -->
 
-<script>
+<!-- <script>
   let selectedOption = "Administracion_Publica";
 
   document.querySelectorAll(".mode-btn").forEach(btn => {
@@ -117,7 +117,7 @@
     });
   });
 
-  <!-- async function send() {
+  async function send() {
     const prompt = document.getElementById("input").value;
 
     try {
@@ -135,13 +135,15 @@
       console.error("Error:", error);
       document.getElementById("response").textContent = "⚠️ Ocurrió un error. Revisa la consola para más detalles.";
     }
-  }  -->
+  }  
+}
+</script>  -->
 
-  async function send() {
+<script>
+ async function send() {
   const prompt = document.getElementById("input").value;
   console.log("Botón presionado. Pregunta:", prompt); // ✅ TEST DE BOTÓN
-  alert("Probando: " + prompt);
-}
+  alert("Probando: " + prompt); 
 </script>
   
 </body>
