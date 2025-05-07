@@ -1,41 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Entrenamiento GPT 👨‍🏫</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex items-center justify-center">
-  <div class="bg-white shadow-md rounded-xl p-8 w-full max-w-xl space-y-4">
-    <h1 class="text-3xl font-bold text-blue-600 text-center">🤖 Chat Educativo GPT</h1>
-    
-    <textarea id="input" class="w-full h-32 p-3 border rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-300" placeholder="Ej: ¿Qué es la fotosíntesis?"></textarea>
-    
-    <button onclick="send()" class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">Enviar</button>
-    
-    <div id="response" class="whitespace-pre-wrap bg-gray-50 border border-gray-200 rounded p-4 text-sm"></div>
-  </div>
-
-  <script>
-    async function send() {
-      //Inicia prueba
-      const prompt = document.getElementById("input").value;
-      console.log("Botón presionado. Pregunta:", prompt); // ✅ TEST DE BOTÓN
-      alert("Probando: " + prompt);
-      // Termina prueba
-      const prompt = document.getElementById("input").value;
-      const res = await fetch("/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt })
-      });
-      const data = await res.json();
-      document.getElementById("response").textContent = data.reply;
-    }
-  </script>
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -73,14 +35,16 @@
     </div>
 
     <textarea id="input" class="w-full p-3 border rounded resize-none focus:ring-2 focus:ring-blue-300" rows="6" placeholder="Escribe tu consulta..."></textarea>
-    <button onclick="send()" class="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded w-full">Enviar</button>
+  <!-- <button onclick="send()" class="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded w-full">Enviar</button>  -->
+    <button id="send-btn" class="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded w-full">Enviar</button>
 
     <div id="response" class="bg-gray-50 p-4 border rounded whitespace-pre-wrap"></div>
   </div>
 
-<!-- <script>
+<script>
   let selectedOption = "Administracion_Publica";
 
+  // Agrega los listeners a los botones de modo
   document.querySelectorAll(".mode-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       selectedOption = btn.dataset.mode;
@@ -89,32 +53,9 @@
     });
   });
 
-  async function send() {
-    const prompt = document.getElementById("input").value;
-    const res = await fetch("/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt, opcion: selectedOption })
-    });
-    const data = await res.json();
-    document.getElementById("response").textContent = data.reply;
-  }
-</script>  -->
-
-<!-- <script>
-  let selectedOption = "Administracion_Publica";
-
-  document.querySelectorAll(".mode-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      // Cambia la opción seleccionada a la que corresponde al atributo data-mode
-      selectedOption = btn.dataset.mode;
-
-      // Quita la clase de resaltado de todos los botones
-      document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("ring", "ring-offset-2"));
-
-      // Agrega la clase de resaltado al botón seleccionado
-      btn.classList.add("ring", "ring-offset-2");
-    });
+  // ✅ Conectamos el botón "Enviar" a la función send()
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("send-btn").addEventListener("click", send);
   });
 
   async function send() {
@@ -135,15 +76,7 @@
       console.error("Error:", error);
       document.getElementById("response").textContent = "⚠️ Ocurrió un error. Revisa la consola para más detalles.";
     }
-  }  
-}
-</script>  -->
-
-<script>
- async function send() {
-  const prompt = document.getElementById("input").value;
-  console.log("Botón presionado. Pregunta:", prompt); // ✅ TEST DE BOTÓN
-  alert("Probando: " + prompt); 
+  }
 </script>
   
 </body>
