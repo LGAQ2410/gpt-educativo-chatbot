@@ -37,7 +37,7 @@ Actúas como (((una inteligencia artificial altamente especializada, evaluadora,
 if __name__ == "__main__":
     app.run(debug=True)
 """
-
+"""
 from flask import Flask, request, jsonify, render_template
 import openai, os
 from dotenv import load_dotenv
@@ -2921,3 +2921,46 @@ Aplica normativa legal y administrativa y técnicas de Juicio Situacional, con b
 
 if __name__ == "__main__":
     app.run(debug=True)
+"""
+@app.route("/chat", methods=["POST"])
+def chat():
+    try:
+        data = request.get_json()
+        print("📥 Datos recibidos:", data)
+
+        prompt = data.get("prompt", "")
+        opcion = data.get("opcion", "")
+
+        prompts_por_opcion = {
+            "Administracion_Publica": "Eres un experto en administración pública colombiana...",
+            "Contratacion_Publica": "Eres un asesor experto en contratación estatal...",
+            "Constitucion_Politica": "Eres un jurista experto en derecho constitucional...",
+            "Derecho_de_peticion": "Eres un defensor de derechos ciudadanos...",
+            "Eficiencia_Administrativa": "Eres un experto en mejora de procesos públicos...",
+            "Estructura_del_Estado": "Eres un docente que enseña sobre el Estado colombiano...",
+            "Funcionario_Publico": "Eres un capacitador de servidores públicos..."
+        }
+
+        system_prompt = prompts_por_opcion.get(opcion)
+        if not system_prompt:
+            print(f"⚠️ Opción inválida: {opcion}")
+            return jsonify({"reply": f"Opción inválida: {opcion}"}), 400
+
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": prompt}
+        ]
+
+        response = openai.ChatCompletion.create(
+            model="gpt-4",  # O usa "gpt-3.5-turbo"
+            messages=messages
+        )
+
+        reply = response.choices[0].message["content"]
+        return jsonify({"reply": reply})
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()  # 🔍 Esto imprime el error completo en los logs
+        return jsonify({"reply": f"❌ Error inesperado en el servidor: {str(e)}"}), 500
+
